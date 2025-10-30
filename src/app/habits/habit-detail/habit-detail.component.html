@@ -1,0 +1,33 @@
+<mat-card *ngIf="habit">
+  <mat-card-title>{{ habit.name }}</mat-card-title>
+  <mat-card-content>
+    <p>{{ habit.description }}</p>
+    <button mat-raised-button color="primary" (click)="markAsDone()" style="margin-bottom: 1rem;">Marcar como cumplido hoy</button>
+    <h3>Porcentaje de cumplimiento</h3>
+    <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">
+      {{ completionPercentage }}%
+    </div>
+    <h3>Historial visual (mes actual)</h3>
+    <div class="calendar">
+      <div class="calendar-row calendar-header">
+        <span *ngFor="let d of ['D','L','M','M','J','V','S']">{{ d }}</span>
+      </div>
+      <div class="calendar-row" *ngFor="let week of [0,1,2,3,4,5]">
+        <span *ngFor="let day of [0,1,2,3,4,5,6]">
+          <ng-container *ngIf="calendarDays[week*7+day]">
+            <span [class.done]="calendarDays[week*7+day].done" class="calendar-day">
+              {{ calendarDays[week*7+day].date.getDate() }}
+            </span>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+    <h3>Historial de cumplimiento</h3>
+    <ul *ngIf="history.length > 0">
+      <li *ngFor="let record of history">✔ {{ record.completedAt | date:'longDate' }}</li>
+    </ul>
+    <div *ngIf="history.length === 0">Aún no has marcado este hábito como cumplido.</div>
+  </mat-card-content>
+</mat-card>
+<div *ngIf="loading">Cargando...</div>
+<div *ngIf="error" class="error-message">{{ error }}</div>

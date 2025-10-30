@@ -1,0 +1,206 @@
+<div class="stats-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon class="error-icon">error</mat-icon>
+    <h3>Error al cargar estadísticas</h3>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="fetchStats()">
+      <mat-icon>refresh</mat-icon>
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error && stats" class="stats-content">
+    
+    <!-- Header -->
+    <div class="stats-header">
+      <div class="header-info">
+        <h1>Estadísticas</h1>
+        <p *ngIf="currentUser">Progreso de {{ currentUser.name }}</p>
+      </div>
+      <div class="header-actions">
+        <button mat-icon-button (click)="refreshStats()" matTooltip="Actualizar">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="metrics-row">
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-value">{{ userStats?.totalHabits || 0 }}</div>
+          <div class="metric-label">Total Hábitos</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card completed">
+        <mat-card-content>
+          <div class="metric-value">{{ userStats?.completedToday || 0 }}</div>
+          <div class="metric-label">Completados Hoy</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card pending">
+        <mat-card-content>
+          <div class="metric-value">{{ userStats?.pendingToday || 0 }}</div>
+          <div class="metric-label">Pendientes</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card streak">
+        <mat-card-content>
+          <div class="metric-value">{{ userStats?.currentStreak || 0 }}</div>
+          <div class="metric-label">Días Racha</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Completion Rate -->
+    <div class="completion-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Tasa de Completación</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="completion-display">
+            <div class="completion-circle">
+              <div class="completion-percentage">{{ getCompletionRate() }}%</div>
+            </div>
+            <div class="completion-info">
+              <mat-progress-bar 
+                mode="determinate" 
+                [value]="getCompletionRate()"
+                color="primary">
+              </mat-progress-bar>
+              <p>{{ userStats?.completedToday || 0 }} de {{ userStats?.totalHabits || 0 }} hábitos completados</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      <!-- Doughnut Chart -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Distribución</mat-card-title>
+          <mat-card-subtitle>Completados vs Pendientes</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas #completionChart></canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Bar Chart -->
+      <mat-card class="chart-card" *ngIf="categoryStats.length > 0">
+        <mat-card-header>
+          <mat-card-title>Por Categoría</mat-card-title>
+          <mat-card-subtitle>Progreso por tipo</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas #categoryChart></canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Line Chart -->
+      <mat-card class="chart-card" *ngIf="stats?.weeklyProgress">
+        <mat-card-header>
+          <mat-card-title>Tendencia Semanal</mat-card-title>
+          <mat-card-subtitle>Últimos 7 días</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas #weeklyChart></canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Category Breakdown -->
+    <div class="category-section" *ngIf="categoryStats.length > 0">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Desglose por Categoría</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="category-list">
+            <div 
+              *ngFor="let category of categoryStats" 
+              class="category-item"
+              [style.border-left-color]="getCategoryColor(category.category)">
+              <div class="category-info">
+                <h4>{{ category.category }}</h4>
+                <p>{{ category.completed }} de {{ category.count }} completados</p>
+              </div>
+              <div class="category-progress">
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="category.percentage">
+                </mat-progress-bar>
+                <span class="percentage">{{ category.percentage }}%</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>lightbulb</mat-icon>
+            Insights
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="insights-list">
+            <div class="insight-item" *ngIf="userStats && userStats.completionRate >= 80">
+              <mat-icon class="insight-icon success">emoji_events</mat-icon>
+              <div class="insight-text">
+                <h4>¡Excelente trabajo!</h4>
+                <p>Has completado más del 80% de tus hábitos hoy.</p>
+              </div>
+            </div>
+            <div class="insight-item" *ngIf="userStats && userStats.currentStreak >= 7">
+              <mat-icon class="insight-icon streak">local_fire_department</mat-icon>
+              <div class="insight-text">
+                <h4>¡Racha impresionante!</h4>
+                <p>Llevas {{ userStats.currentStreak }} días consecutivos.</p>
+              </div>
+            </div>
+            <div class="insight-item" *ngIf="userStats && userStats.pendingToday > 0">
+              <mat-icon class="insight-icon pending">schedule</mat-icon>
+              <div class="insight-text">
+                <h4>Tienes {{ userStats.pendingToday }} hábitos pendientes</h4>
+                <p>No te rindas, aún tienes tiempo.</p>
+              </div>
+            </div>
+            <div class="insight-item" *ngIf="userStats && !userStats.completedToday">
+              <mat-icon class="insight-icon warning">warning</mat-icon>
+              <div class="insight-text">
+                <h4>¡Comienza tu día!</h4>
+                <p>Aún no has completado ningún hábito hoy.</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,317 @@
+// Variables basadas en la imagen
+$primary-color: #4a6741; // Verde natural
+$secondary-color: #8fbc8f; // Verde claro
+$accent-color: #2e8b57; // Verde mar
+$text-dark: #2c3e50; // Azul oscuro
+$text-light: #7f8c8d; // Gris claro
+$white: #ffffff;
+$background-light: #f8f9fa;
+$shadow-color: rgba(0, 0, 0, 0.1);
+
+// Animación de shake
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.login-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+// Fondo con imagen
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/login.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+// Overlay para mejorar legibilidad
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(74, 103, 65, 0.8) 0%,
+    rgba(142, 188, 143, 0.6) 100%
+  );
+  z-index: 2;
+}
+
+// Contenido principal
+.login-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 450px;
+  padding: 20px;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 48px 40px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $primary-color, $secondary-color, $accent-color);
+  }
+}
+
+// Header elegante
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo-container {
+  margin-bottom: 24px;
+}
+
+.logo-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: $primary-color;
+  margin-bottom: 16px;
+}
+
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: $text-dark;
+  letter-spacing: 1px;
+}
+
+.brand-subtitle {
+  font-size: 1rem;
+  color: $text-light;
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+// Formulario elegante
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  position: relative;
+}
+
+.elegant-input {
+  width: 100%;
+}
+
+// Estilos para campos de formulario
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(74, 103, 65, 0.2);
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: $primary-color;
+}
+
+::ng-deep .mat-form-field-label {
+  color: $text-dark !important;
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: $accent-color;
+}
+
+::ng-deep .mat-input-element {
+  color: $text-dark !important;
+}
+
+.field-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  color: $primary-color;
+}
+
+// Botón elegante
+.elegant-button {
+  height: 56px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, $primary-color, $accent-color);
+  border: none;
+  color: white;
+  box-shadow: 0 8px 24px rgba(74, 103, 65, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(74, 103, 65, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    transform: none;
+  }
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button-spinner {
+  margin-right: 8px;
+}
+
+// Mensajes de error
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e74c3c;
+  font-size: 14px;
+  padding: 16px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 12px;
+  border-left: 4px solid #e74c3c;
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #e74c3c;
+  }
+}
+
+// Footer elegante
+.login-footer {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(74, 103, 65, 0.2);
+}
+
+.footer-text {
+  margin: 0;
+  color: $text-light;
+  font-size: 14px;
+}
+
+.register-link {
+  color: $accent-color;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: $primary-color;
+    text-decoration: underline;
+  }
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .login-content {
+    padding: 16px;
+  }
+  
+  .login-card {
+    padding: 32px 24px;
+  }
+  
+  .brand-title {
+    font-size: 2rem;
+  }
+  
+  .logo-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+// Efectos adicionales
+.login-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 24px 48px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+// Mejoras para accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .login-card,
+  .form-group,
+  .elegant-button {
+    animation: none;
+    transition: none;
+  }
+}
+
+
+

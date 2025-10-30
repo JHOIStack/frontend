@@ -1,0 +1,33 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 1.5rem;
+}
+.calendar-row {
+  display: flex;
+  justify-content: center;
+}
+.calendar-header span {
+  font-weight: bold;
+  width: 2.2rem;
+  text-align: center;
+}
+.calendar-day {
+  display: inline-block;
+  width: 2.2rem;
+  height: 2.2rem;
+  line-height: 2.2rem;
+  text-align: center;
+  border-radius: 50%;
+  margin: 0.1rem;
+  background: #f5f5f5;
+  color: #333;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.calendar-day.done {
+  background: #388e3c;
+  color: #fff;
+  font-weight: bold;
+}

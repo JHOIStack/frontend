@@ -1,0 +1,189 @@
+<!-- Navbar principal -->
+<mat-toolbar class="navbar">
+  <div class="navbar-container">
+    <!-- Logo y marca -->
+    <div class="logo-section">
+      <div class="logo" routerLink="/dashboard">
+        <mat-icon class="logo-icon">eco</mat-icon>
+        <span class="brand">SmartHabits</span>
+      </div>
+    </div>
+
+    <!-- Breadcrumbs -->
+    <div *ngIf="showBreadcrumbs" class="breadcrumbs-section">
+      <div class="breadcrumbs">
+        <a mat-button 
+           routerLink="/dashboard" 
+           class="breadcrumb-home"
+           matTooltip="Ir al inicio">
+          <mat-icon>home</mat-icon>
+        </a>
+        <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+        <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
+          <button mat-button 
+                  [class.active]="breadcrumb.isLast"
+                  (click)="navigateToBreadcrumb(breadcrumb)"
+                  class="breadcrumb-item"
+                  [matTooltip]="breadcrumb.label">
+            <mat-icon>{{ breadcrumb.icon }}</mat-icon>
+            <span>{{ breadcrumb.label }}</span>
+          </button>
+          <mat-icon *ngIf="!last" class="breadcrumb-separator">chevron_right</mat-icon>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Navegación principal -->
+    <nav class="nav-links desktop">
+      <a mat-button 
+         routerLink="/dashboard" 
+         routerLinkActive="active" 
+         class="nav-link"
+         matTooltip="Dashboard">
+        <mat-icon>dashboard</mat-icon>
+        <span>Inicio</span>
+      </a>
+      
+      <a mat-button 
+         routerLink="/habits" 
+         routerLinkActive="active" 
+         class="nav-link"
+         matTooltip="Gestionar hábitos">
+        <span class="nav-item-content">
+          <mat-icon matBadge="{{ pendingCount > 0 ? pendingCount : null }}" 
+                    matBadgeColor="warn" 
+                    matBadgeHidden="pendingCount === 0">check_circle</mat-icon>
+          <span>Hábitos</span>
+        </span>
+      </a>
+      
+      <a mat-button 
+         routerLink="/stats" 
+         routerLinkActive="active" 
+         class="nav-link"
+         matTooltip="Ver estadísticas">
+        <mat-icon>analytics</mat-icon>
+        <span>Estadísticas</span>
+      </a>
+      
+
+    </nav>
+
+
+
+    <!-- Acciones del usuario -->
+    <div class="user-actions">
+      <!-- Notificaciones -->
+      <button mat-icon-button 
+              class="notification-btn"
+              matTooltip="Notificaciones"
+              [matBadge]="pendingCount > 0 ? pendingCount : null"
+              matBadgeColor="warn"
+              matBadgeHidden="pendingCount === 0">
+        <mat-icon>notifications</mat-icon>
+      </button>
+
+      <!-- Toggle de tema -->
+      <button mat-icon-button 
+              (click)="toggleTheme()" 
+              class="theme-toggle" 
+              matTooltip="Alternar tema">
+        <mat-icon>{{ isDarkTheme ? 'dark_mode' : 'light_mode' }}</mat-icon>
+      </button>
+      
+      <!-- Avatar del usuario -->
+      <div class="user-avatar" [matMenuTriggerFor]="userMenu">
+        <div class="avatar-circle">
+          <span>{{ getCurrentUserAvatar() }}</span>
+        </div>
+        <span class="user-name">{{ getCurrentUserDisplayName() }}</span>
+        <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
+      </div>
+
+      <!-- Menú hamburguesa para móvil -->
+      <button mat-icon-button 
+              [matMenuTriggerFor]="mobileMenu" 
+              class="mobile-menu" 
+              matTooltip="Abrir menú">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
+  </div>
+</mat-toolbar>
+
+<!-- Menú del usuario -->
+<mat-menu #userMenu="matMenu" class="user-menu">
+  
+
+  
+  <button mat-menu-item routerLink="/stats">
+    <mat-icon>analytics</mat-icon>
+    <span>Mis Estadísticas</span>
+  </button>
+  
+  <button mat-menu-item routerLink="/habits/new">
+    <mat-icon>add</mat-icon>
+    <span>Nuevo Hábito</span>
+  </button>
+  
+  <mat-divider></mat-divider>
+  
+  <button mat-menu-item (click)="toggleTheme()">
+    <mat-icon>{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    <span>{{ isDarkTheme ? 'Tema Claro' : 'Tema Oscuro' }}</span>
+  </button>
+  
+  <button mat-menu-item>
+    <mat-icon>settings</mat-icon>
+    <span>Configuración</span>
+  </button>
+  
+  <mat-divider></mat-divider>
+  
+  <button mat-menu-item (click)="logout()" class="logout-item">
+    <mat-icon>logout</mat-icon>
+    <span>Cerrar Sesión</span>
+  </button>
+</mat-menu>
+
+<!-- Menú móvil -->
+<mat-menu #mobileMenu="matMenu" class="mobile-menu-content">
+  
+  <button mat-menu-item routerLink="/dashboard" class="mobile-nav-item">
+    <mat-icon>dashboard</mat-icon>
+    <span>Dashboard</span>
+  </button>
+  
+  <button mat-menu-item routerLink="/habits" class="mobile-nav-item">
+    <mat-icon matBadge="{{ pendingCount > 0 ? pendingCount : null }}" 
+              matBadgeColor="warn" 
+              matBadgeHidden="pendingCount === 0">check_circle</mat-icon>
+    <span>Hábitos</span>
+  </button>
+  
+  <button mat-menu-item routerLink="/stats" class="mobile-nav-item">
+    <mat-icon>analytics</mat-icon>
+    <span>Estadísticas</span>
+  </button>
+  
+
+  
+  <mat-divider></mat-divider>
+  
+  <button mat-menu-item (click)="toggleTheme()" class="mobile-nav-item">
+    <mat-icon>{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    <span>{{ isDarkTheme ? 'Tema Claro' : 'Tema Oscuro' }}</span>
+  </button>
+  
+  <button mat-menu-item class="mobile-nav-item">
+    <mat-icon>notifications</mat-icon>
+    <span>Notificaciones</span>
+  </button>
+  
+  <mat-divider></mat-divider>
+  
+  <button mat-menu-item (click)="logout()" class="mobile-nav-item logout">
+    <mat-icon>logout</mat-icon>
+    <span>Cerrar sesión</span>
+  </button>
+</mat-menu>

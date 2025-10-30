@@ -1,0 +1,492 @@
+// Variables de color para tema sostenible
+$primary-green: #2e7d32;
+$secondary-green: #4caf50;
+$accent-green: #66bb6a;
+$dark-green: #1b5e20;
+$light-green: #c8e6c9;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$danger-color: #f44336;
+$text-dark: #2c3e50;
+$text-light: #7f8c8d;
+$white: #ffffff;
+$background-light: #f8f9fa;
+$background-dark: #2c3e50;
+
+// Gradientes sostenibles
+$gradient-primary: linear-gradient(135deg, $primary-green 0%, $secondary-green 100%);
+$gradient-secondary: linear-gradient(135deg, $secondary-green 0%, $accent-green 100%);
+$gradient-background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e8 50%, #f1f8e9 100%);
+$gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 255, 248, 0.95) 100%);
+
+.navbar {
+  background: $gradient-card;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(46, 125, 50, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  padding: 0;
+  height: auto;
+  min-height: 64px;
+
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+      padding: 0 16px;
+      gap: 16px;
+    }
+  }
+}
+
+// Logo y marca
+.logo-section {
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 12px;
+
+    &:hover {
+      background: rgba(76, 175, 80, 0.1);
+      transform: scale(1.05);
+    }
+
+    .logo-icon {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+      color: $primary-green;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: $gradient-primary;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+
+      @media (max-width: 768px) {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+// Breadcrumbs
+.breadcrumbs-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .breadcrumb-home {
+      display: flex;
+      align-items: center;
+      color: $primary-green;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      mat-icon {
+        font-size: 1.2rem;
+        width: 1.2rem;
+        height: 1.2rem;
+      }
+    }
+
+    .breadcrumb-separator {
+      color: $text-light;
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: $text-dark;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      padding: 4px 8px;
+
+      &:hover {
+        background: rgba(76, 175, 80, 0.1);
+        color: $primary-green;
+      }
+
+      &.active {
+        background: rgba(76, 175, 80, 0.2);
+        color: $primary-green;
+        font-weight: 600;
+      }
+
+      mat-icon {
+        font-size: 1rem;
+        width: 1rem;
+        height: 1rem;
+      }
+
+      span {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Navegación principal
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $text-dark;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      background: rgba(76, 175, 80, 0.1);
+      color: $primary-green;
+      transform: translateY(-1px);
+    }
+
+    &.active {
+      background: rgba(76, 175, 80, 0.2);
+      color: $primary-green;
+      font-weight: 600;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        background: $gradient-primary;
+        border-radius: 2px;
+      }
+    }
+
+    mat-icon {
+      font-size: 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    span {
+      font-size: 0.9rem;
+    }
+
+    .nav-item-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+
+
+// Acciones del usuario
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .notification-btn {
+    color: $text-light;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: $primary-green;
+      transform: scale(1.1);
+    }
+  }
+
+  .theme-toggle {
+    color: $text-light;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: $primary-green;
+      transform: scale(1.1);
+    }
+  }
+
+  .user-avatar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(76, 175, 80, 0.1);
+    }
+
+    .avatar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: $gradient-primary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+
+    .user-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: $text-dark;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
+    .dropdown-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+      color: $text-light;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover .dropdown-icon {
+      transform: rotate(180deg);
+    }
+  }
+
+  .mobile-menu {
+    color: $text-light;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: $primary-green;
+    }
+
+    @media (min-width: 769px) {
+      display: none;
+    }
+  }
+}
+
+// Menús
+.user-menu, .mobile-menu-content {
+  min-width: 280px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
+  background: $gradient-card;
+
+  .menu-header, .mobile-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    .user-info-menu, .mobile-user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .avatar-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: $gradient-primary;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+      }
+
+      .user-details, .mobile-user-details {
+        flex: 1;
+
+        .user-name {
+          display: block;
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: $text-dark;
+          margin-bottom: 4px;
+        }
+
+        .user-email {
+          display: block;
+          font-size: 0.85rem;
+          color: $text-light;
+        }
+
+        
+      }
+    }
+  }
+
+  button[mat-menu-item] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: $text-dark;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(76, 175, 80, 0.1);
+      color: $primary-green;
+    }
+
+    mat-icon {
+      color: $text-light;
+      font-size: 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    &.logout-item {
+      color: $danger-color;
+
+      &:hover {
+        background: rgba(244, 67, 54, 0.1);
+        color: $danger-color;
+      }
+
+      mat-icon {
+        color: $danger-color;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .navbar {
+    .navbar-container {
+      padding: 0 12px;
+    }
+  }
+
+  .breadcrumbs-section {
+    display: none;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+
+}
+
+// Tema oscuro
+body.dark-theme {
+  .navbar {
+    background: linear-gradient(145deg, rgba(52, 73, 94, 0.95) 0%, rgba(44, 62, 80, 0.95) 100%);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .logo .brand {
+    color: #ecf0f1;
+  }
+
+  .nav-link {
+    color: #ecf0f1;
+
+    &:hover, &.active {
+      color: #4caf50;
+    }
+  }
+
+  .user-avatar .user-name {
+    color: #ecf0f1;
+  }
+
+  .breadcrumbs {
+    background: rgba(52, 73, 94, 0.8);
+
+    .breadcrumb-item {
+      color: #ecf0f1;
+
+      &:hover, &.active {
+        color: #4caf50;
+      }
+    }
+  }
+
+  .user-menu, .mobile-menu-content {
+    background: linear-gradient(145deg, rgba(52, 73, 94, 0.95) 0%, rgba(44, 62, 80, 0.95) 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+
+    button[mat-menu-item] {
+      color: #ecf0f1;
+
+      &:hover {
+        color: #4caf50;
+      }
+    }
+
+    .user-name {
+      color: #ecf0f1;
+    }
+
+         .user-email {
+       color: #bdc3c7;
+     }
+  }
+}

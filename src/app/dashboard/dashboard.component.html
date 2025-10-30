@@ -1,0 +1,244 @@
+<div class="dashboard-container">
+  <!-- Notificaciones -->
+  <div *ngIf="showNotifications" class="notifications-container" [@slideIn]>
+    <div *ngFor="let notification of notifications; let i = index" 
+         class="notification-card"
+         [class]="'notification-' + notification.type"
+         [@fadeIn]>
+      <div class="notification-content">
+        <mat-icon>{{ notification.icon }}</mat-icon>
+        <span>{{ notification.message }}</span>
+      </div>
+      <button mat-icon-button (click)="dismissNotification(i)" class="dismiss-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header del dashboard -->
+  <div class="dashboard-header" [@fadeIn]>
+    <div class="welcome-section">
+      <h1 class="welcome-title">
+        ¡Bienvenido de vuelta{{ userName ? ', ' + userName : '' }}!
+      </h1>
+      <p class="welcome-subtitle">Continúa tu viaje hacia un futuro más sostenible</p>
+    </div>
+    <div class="date-section">
+      <div class="current-date">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ currentDate | date:'EEEE, d \'de\' MMMM' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estadísticas rápidas -->
+  <div class="stats-grid">
+    <div class="stat-card" [@scaleIn]>
+      <div class="stat-icon">
+        <mat-icon>eco</mat-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ totalHabits }}</h3>
+        <p class="stat-label">Hábitos Sostenibles</p>
+      </div>
+    </div>
+    
+    <div class="stat-card" [@scaleIn]>
+      <div class="stat-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ completedToday }}</h3>
+        <p class="stat-label">Completados Hoy</p>
+      </div>
+    </div>
+    
+    <div class="stat-card" [@scaleIn]>
+      <div class="stat-icon">
+        <mat-icon>pending</mat-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ pendingToday }}</h3>
+        <p class="stat-label">Pendientes Hoy</p>
+      </div>
+    </div>
+    
+    <div class="stat-card" [@scaleIn]>
+      <div class="stat-icon">
+        <mat-icon>local_fire_department</mat-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ currentStreak }}</h3>
+        <p class="stat-label">Días de Streak Verde</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progreso semanal -->
+  <div class="progress-section" [@slideIn]>
+    <div class="progress-card">
+      <div class="progress-header">
+        <h3>Progreso Semanal</h3>
+        <span class="progress-percentage">{{ weeklyProgress }}%</span>
+      </div>
+      <mat-progress-bar 
+        [value]="weeklyProgress" 
+        color="primary"
+        class="progress-bar">
+      </mat-progress-bar>
+      <p class="progress-description">
+        {{ weeklyProgress >= 80 ? '¡Excelente progreso!' : 
+           weeklyProgress >= 50 ? 'Buen trabajo, sigue así' : 
+           'Cada día cuenta, ¡tú puedes!' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Logros -->
+  <div class="achievements-section" [@slideIn]>
+    <h3 class="section-title">
+      <mat-icon>emoji_events</mat-icon>
+      Mis Logros
+    </h3>
+    <div class="achievements-grid">
+      <div *ngFor="let achievement of achievements" 
+           class="achievement-card"
+           [class.unlocked]="achievement.unlocked"
+           [@scaleIn]>
+        <div class="achievement-icon" [style.color]="achievement.color">
+          <mat-icon>{{ getAchievementIcon(achievement) }}</mat-icon>
+        </div>
+        <div class="achievement-content">
+          <h4>{{ achievement.name }}</h4>
+          <p>{{ achievement.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de Hábitos de Hoy -->
+  <div class="habits-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <mat-icon>eco</mat-icon>
+        Mis Hábitos Sostenibles
+      </h2>
+      <button mat-raised-button class="elegant-button" routerLink="/habits/new">
+        <mat-icon>add</mat-icon>
+        Nuevo Hábito Verde
+      </button>
+    </div>
+
+    <div *ngIf="loadingHabits" class="loading-spinner">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Cargando hábitos sostenibles...</p>
+    </div>
+
+    <div *ngIf="todayHabits.length > 0; else noHabits">
+      <div class="habits-grid">
+        <div class="habit-card" 
+             *ngFor="let habit of todayHabits; trackBy: trackByHabitId"
+             [class.completed]="habit.completed"
+             [@slideIn]>
+          <div class="habit-header">
+            <div class="habit-info">
+              <h3 class="habit-title">{{ habit.name }}</h3>
+              <p class="habit-description">{{ habit.description }}</p>
+            </div>
+            <div class="habit-actions">
+              <button mat-icon-button 
+                      class="complete-btn"
+                      [class.completed]="habit.completed"
+                      (click)="toggleHabit(habit)">
+                <mat-icon>{{ habit.completed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="habit-footer">
+            <div class="habit-category">
+              <mat-icon>category</mat-icon>
+              <span>{{ habit.category }}</span>
+            </div>
+            <div class="habit-impact" *ngIf="habit.completed">
+              <mat-icon>trending_up</mat-icon>
+              <span>Impacto positivo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noHabits>
+      <div class="empty-state" [@slideIn]>
+        <mat-icon class="empty-icon">eco</mat-icon>
+        <h3>No tienes hábitos sostenibles para hoy</h3>
+        <p>¡Crea tu primer hábito verde y comienza a hacer la diferencia!</p>
+        <button mat-raised-button class="elegant-button" routerLink="/habits/new">
+          <mat-icon>add</mat-icon>
+          Crear Mi Primer Hábito Verde
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Hábitos recomendados -->
+  <div class="recommended-section" [@slideIn]>
+    <h3 class="section-title">
+      <mat-icon>lightbulb</mat-icon>
+      Hábitos Recomendados
+    </h3>
+    <div class="recommended-grid">
+      <div *ngFor="let habit of recommendedHabits" 
+           class="recommended-card"
+           [@scaleIn]>
+        <div class="recommended-header">
+          <h4>{{ habit.name }}</h4>
+          <div class="habit-badges">
+            <mat-chip [style.background-color]="getDifficultyColor(habit.difficulty)" 
+                     class="difficulty-chip">
+              {{ habit.difficulty }}
+            </mat-chip>
+            <mat-chip [style.background-color]="getImpactColor(habit.impact)" 
+                     class="impact-chip">
+              {{ habit.impact }}
+            </mat-chip>
+          </div>
+        </div>
+        <p class="recommended-description">{{ habit.description }}</p>
+        <div class="recommended-category">
+          <mat-icon>category</mat-icon>
+          <span>{{ habit.category }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de motivación diaria -->
+  <div class="motivation-section">
+    <div class="motivation-card" [@fadeIn]>
+      <div class="motivation-content">
+        <div class="motivation-icon">
+          <mat-icon>lightbulb</mat-icon>
+        </div>
+        <h3 class="motivation-title">Inspiración Sostenible del Día</h3>
+        <p class="motivation-text">{{ dailyMotivation }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones rápidas -->
+  <div class="quick-actions">
+    <div class="actions-grid">
+      <a routerLink="/habits" class="action-btn" [@scaleIn]>
+        <mat-icon>list</mat-icon>
+        Ver Todos los Hábitos Verdes
+      </a>
+      <a routerLink="/stats" class="action-btn" [@scaleIn]>
+        <mat-icon>analytics</mat-icon>
+        Ver Impacto Ambiental
+      </a>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="login-container">
+  <!-- Fondo con imagen -->
+  <div class="background-image"></div>
+  
+  <!-- Overlay para mejorar legibilidad -->
+  <div class="overlay"></div>
+  
+  <!-- Contenido principal -->
+  <div class="login-content">
+    <div class="login-card" [@slideInUp]>
+      <!-- Header elegante -->
+      <div class="login-header">
+        <div class="logo-container">
+          <mat-icon class="logo-icon">eco</mat-icon>
+        </div>
+        <h1 class="brand-title">SmartHabits</h1>
+        <p class="brand-subtitle">Transforma tu vida, un hábito a la vez</p>
+      </div>
+
+      <!-- Formulario elegante -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group" [@fadeInUp]>
+          <mat-form-field appearance="outline" class="elegant-input">
+            <mat-label>
+              <mat-icon class="field-icon">email</mat-icon>
+              Email
+            </mat-label>
+            <input matInput formControlName="email" type="email" required />
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              El email es obligatorio
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              Email inválido
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group" [@fadeInUp]>
+          <mat-form-field appearance="outline" class="elegant-input">
+            <mat-label>
+              <mat-icon class="field-icon">lock</mat-icon>
+              Contraseña
+            </mat-label>
+            <input matInput formControlName="password" type="password" required />
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              La contraseña es obligatoria
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <button mat-raised-button 
+                type="submit" 
+                [disabled]="loading || loginForm.invalid" 
+                class="elegant-button"
+                [@buttonPulse]="loading ? 'pulse' : 'normal'">
+          <div class="button-content">
+            <mat-spinner diameter="20" *ngIf="loading" class="button-spinner"></mat-spinner>
+            <mat-icon *ngIf="!loading">login</mat-icon>
+            <span *ngIf="!loading">Iniciar Sesión</span>
+          </div>
+        </button>
+
+        <div *ngIf="error" class="error-message" [@shake]>
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error }}</span>
+        </div>
+      </form>
+
+      <!-- Footer elegante -->
+      <div class="login-footer" [@fadeInUp]>
+        <p class="footer-text">
+          ¿No tienes una cuenta? 
+          <a routerLink="/auth/register" class="register-link">
+            Regístrate aquí
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

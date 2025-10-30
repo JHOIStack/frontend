@@ -1,0 +1,182 @@
+<div class="habit-form-container">
+  <div class="form-content" [@fadeInOut]>
+    
+    <!-- Header -->
+    <div class="form-header">
+      <div class="header-info">
+        <h1>{{ isEdit ? 'Editar Hábito' : 'Crear Nuevo Hábito' }}</h1>
+        <p>{{ isEdit ? 'Modifica los detalles de tu hábito' : 'Define un nuevo hábito sostenible para tu rutina' }}</p>
+      </div>
+      <div class="header-icon">
+        <mat-icon>eco</mat-icon>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <mat-card class="form-card">
+      <mat-card-content>
+        <form [formGroup]="habitForm" (ngSubmit)="onSubmit()" class="habit-form">
+          
+          <!-- Nombre del hábito -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>
+              <mat-icon>edit</mat-icon>
+              Nombre del hábito
+            </mat-label>
+            <input matInput formControlName="name" placeholder="Ej: Separar residuos" />
+            <mat-error *ngIf="habitForm.get('name')?.hasError('required')">
+              El nombre es obligatorio
+            </mat-error>
+            <mat-error *ngIf="habitForm.get('name')?.hasError('minlength')">
+              Mínimo 3 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Categoría -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>
+              <mat-icon>category</mat-icon>
+              Categoría
+            </mat-label>
+            <mat-select formControlName="category">
+              <mat-option value="ENERGIA">
+                <div class="category-option">
+                  <mat-icon>lightbulb</mat-icon>
+                  <div class="category-text">
+                    <span class="category-name">Energía</span>
+                    <span class="category-desc">Hábitos para ahorrar energía</span>
+                  </div>
+                </div>
+              </mat-option>
+              <mat-option value="CONSUMO">
+                <div class="category-option">
+                  <mat-icon>shopping_cart</mat-icon>
+                  <div class="category-text">
+                    <span class="category-name">Consumo</span>
+                    <span class="category-desc">Consumo responsable</span>
+                  </div>
+                </div>
+              </mat-option>
+              <mat-option value="AGUA">
+                <div class="category-option">
+                  <mat-icon>water_drop</mat-icon>
+                  <div class="category-text">
+                    <span class="category-name">Agua</span>
+                    <span class="category-desc">Ahorro de agua</span>
+                  </div>
+                </div>
+              </mat-option>
+              <mat-option value="MOVILIDAD">
+                <div class="category-option">
+                  <mat-icon>directions_car</mat-icon>
+                  <div class="category-text">
+                    <span class="category-name">Movilidad</span>
+                    <span class="category-desc">Transporte sostenible</span>
+                  </div>
+                </div>
+              </mat-option>
+              <mat-option value="RESIDUOS">
+                <div class="category-option">
+                  <mat-icon>delete</mat-icon>
+                  <div class="category-text">
+                    <span class="category-name">Residuos</span>
+                    <span class="category-desc">Gestión de residuos</span>
+                  </div>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="habitForm.get('category')?.hasError('required')">
+              Selecciona una categoría
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Descripción -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>
+              <mat-icon>description</mat-icon>
+              Descripción
+            </mat-label>
+            <textarea 
+              matInput 
+              formControlName="description" 
+              placeholder="Describe tu hábito y su impacto ambiental..."
+              rows="4">
+            </textarea>
+            <mat-error *ngIf="habitForm.get('description')?.hasError('required')">
+              La descripción es obligatoria
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Preview de la categoría seleccionada -->
+          <div *ngIf="habitForm.get('category')?.value" class="category-preview">
+            <div class="preview-header">
+              <mat-icon>{{ getCategoryIcon(habitForm.get('category')?.value) }}</mat-icon>
+              <span>{{ getCategoryLabel(habitForm.get('category')?.value) }}</span>
+            </div>
+            <p>{{ getCategoryDescription(habitForm.get('category')?.value) }}</p>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="form-actions">
+            <button 
+              mat-stroked-button 
+              type="button" 
+              (click)="onCancel()"
+              class="cancel-btn">
+              <mat-icon>arrow_back</mat-icon>
+              Cancelar
+            </button>
+            
+            <button 
+              mat-raised-button 
+              type="submit" 
+              [disabled]="loading || habitForm.invalid"
+              class="submit-btn">
+              <mat-icon *ngIf="!loading">{{ isEdit ? 'save' : 'add' }}</mat-icon>
+              <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+              {{ loading ? (isEdit ? 'Guardando...' : 'Creando...') : (isEdit ? 'Guardar Cambios' : 'Crear Hábito') }}
+            </button>
+          </div>
+
+          <!-- Error message -->
+          <div *ngIf="error" class="error-message">
+            <mat-icon>error</mat-icon>
+            <span>{{ error }}</span>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tips section -->
+    <mat-card class="tips-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>lightbulb</mat-icon>
+          Consejos para crear hábitos efectivos
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="tips-list">
+          <div class="tip-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>Comienza con hábitos pequeños y fáciles de mantener</span>
+          </div>
+          <div class="tip-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Establece horarios específicos para tu nuevo hábito</span>
+          </div>
+          <div class="tip-item">
+            <mat-icon>trending_up</mat-icon>
+            <span>Mide tu progreso para mantener la motivación</span>
+          </div>
+          <div class="tip-item">
+            <mat-icon>group</mat-icon>
+            <span>Comparte tus objetivos con amigos o familia</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

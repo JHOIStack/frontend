@@ -1,0 +1,251 @@
+<div class="habits-container">
+  <!-- Header con estadísticas -->
+  <div class="habits-header" [@fadeIn]>
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon>list</mat-icon>
+          Mis Hábitos Sostenibles
+        </h1>
+        <p class="page-subtitle">Gestiona y organiza tus hábitos ecológicos</p>
+      </div>
+      <button mat-raised-button class="elegant-button" routerLink="/habits/new">
+        <mat-icon>add</mat-icon>
+        Nuevo Hábito
+      </button>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="stats-overview" [@slideIn]>
+      <div class="stat-item">
+        <div class="stat-icon">
+          <mat-icon>eco</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ totalHabits }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon completed">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ completedHabits }}</span>
+          <span class="stat-label">Completados</span>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon pending">
+          <mat-icon>pending</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ pendingHabits }}</span>
+          <span class="stat-label">Pendientes</span>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon" [style.color]="getCompletionRateColor()">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="stat-content">
+          <span class="stat-number">{{ completionRate }}%</span>
+          <span class="stat-label">Progreso</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros y controles -->
+  <div class="filters-section" [@slideIn]>
+    <div class="filters-container">
+      <div class="search-filter">
+        <mat-form-field appearance="outline">
+          <mat-label>
+            <mat-icon>search</mat-icon>
+            Buscar hábitos
+          </mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Buscar por nombre o descripción...">
+        </mat-form-field>
+      </div>
+
+      <div class="filter-controls">
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <mat-select [formControl]="categoryFilter">
+            <mat-option *ngFor="let category of categories" [value]="category.value">
+              {{ category.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select [formControl]="statusFilter">
+            <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+              {{ status.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
+          <mat-icon>clear</mat-icon>
+          Limpiar
+        </button>
+      </div>
+
+      <div class="view-controls">
+        <button mat-icon-button 
+                [class.active]="viewMode === 'grid'"
+                (click)="toggleViewMode()"
+                matTooltip="Vista de cuadrícula">
+          <mat-icon>grid_view</mat-icon>
+        </button>
+        <button mat-icon-button 
+                [class.active]="viewMode === 'list'"
+                (click)="toggleViewMode()"
+                matTooltip="Vista de lista">
+          <mat-icon>view_list</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading y errores -->
+  <div *ngIf="loading" class="loading-spinner" [@fadeIn]>
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando hábitos...</p>
+  </div>
+  
+  <div *ngIf="error" class="error-message" [@fadeIn]>
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="!loading && !error && filteredHabits.length === 0" class="empty-state" [@slideIn]>
+    <mat-icon class="empty-icon">add_task</mat-icon>
+    <h3>No se encontraron hábitos</h3>
+    <p *ngIf="habits.length === 0">¡Comienza creando tu primer hábito sostenible!</p>
+    <p *ngIf="habits.length > 0">Intenta ajustar los filtros de búsqueda</p>
+    <button mat-raised-button class="elegant-button" routerLink="/habits/new">
+      <mat-icon>add</mat-icon>
+      Crear Mi Primer Hábito
+    </button>
+  </div>
+
+  <!-- Lista de hábitos -->
+  <div *ngIf="!loading && !error && filteredHabits.length > 0" class="habits-content">
+    <!-- Vista de cuadrícula -->
+    <div *ngIf="viewMode === 'grid'" class="habits-grid" [@fadeIn]>
+      <div *ngFor="let habit of filteredHabits" 
+           class="habit-card"
+           [class.completed]="habit.completed"
+           [@scaleIn]>
+        
+        <div class="habit-header">
+          <div class="habit-category-chip" [style.background-color]="getCategoryColor(habit.category)">
+            <mat-icon>{{ getCategoryIcon(habit.category) }}</mat-icon>
+            <span>{{ habit.category }}</span>
+          </div>
+          <button mat-icon-button 
+                  class="toggle-btn"
+                  [class.completed]="habit.completed"
+                  (click)="toggleHabit(habit)"
+                  matTooltip="{{ habit.completed ? 'Marcar como pendiente' : 'Marcar como completado' }}">
+            <mat-icon>{{ habit.completed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          </button>
+        </div>
+
+        <div class="habit-content">
+          <h3 class="habit-title">{{ habit.name }}</h3>
+          <p class="habit-description">{{ habit.description }}</p>
+        </div>
+
+        <div class="habit-footer">
+          <div class="habit-status">
+            <mat-icon [class.completed]="habit.completed">
+              {{ habit.completed ? 'check_circle' : 'schedule' }}
+            </mat-icon>
+            <span [class.completed]="habit.completed">
+              {{ habit.completed ? 'Completado' : 'Pendiente' }}
+            </span>
+          </div>
+          
+          <div class="habit-actions">
+            <button mat-icon-button 
+                    [routerLink]="['/habits', habit.id, 'edit']"
+                    matTooltip="Editar hábito">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button 
+                    class="delete-btn"
+                    (click)="onDelete(habit.id)"
+                    matTooltip="Eliminar hábito">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista de lista -->
+    <div *ngIf="viewMode === 'list'" class="habits-list" [@fadeIn]>
+      <div *ngFor="let habit of filteredHabits" 
+           class="habit-list-item"
+           [class.completed]="habit.completed"
+           [@slideIn]>
+        
+        <div class="habit-main">
+          <div class="habit-info">
+            <div class="habit-title-section">
+              <h3 class="habit-title">{{ habit.name }}</h3>
+              <div class="habit-category-chip" [style.background-color]="getCategoryColor(habit.category)">
+                <mat-icon>{{ getCategoryIcon(habit.category) }}</mat-icon>
+                <span>{{ habit.category }}</span>
+              </div>
+            </div>
+            <p class="habit-description">{{ habit.description }}</p>
+          </div>
+
+          <div class="habit-status-section">
+            <div class="habit-status">
+              <mat-icon [class.completed]="habit.completed">
+                {{ habit.completed ? 'check_circle' : 'schedule' }}
+              </mat-icon>
+              <span [class.completed]="habit.completed">
+                {{ habit.completed ? 'Completado' : 'Pendiente' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="habit-actions">
+          <button mat-icon-button 
+                  class="toggle-btn"
+                  [class.completed]="habit.completed"
+                  (click)="toggleHabit(habit)"
+                  matTooltip="{{ habit.completed ? 'Marcar como pendiente' : 'Marcar como completado' }}">
+            <mat-icon>{{ habit.completed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          </button>
+          
+          <button mat-icon-button 
+                  [routerLink]="['/habits', habit.id, 'edit']"
+                  matTooltip="Editar hábito">
+            <mat-icon>edit</mat-icon>
+          </button>
+          
+          <button mat-icon-button 
+                  class="delete-btn"
+                  (click)="onDelete(habit.id)"
+                  matTooltip="Eliminar hábito">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
