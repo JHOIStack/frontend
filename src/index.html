@@ -17,7 +17,6 @@
   <meta name="keywords" content="hábitos, productividad, bienestar, salud, rutinas">
   <meta name="author" content="SmartHabits Team">
   
-  <!-- PWA Meta Tags -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,36 +25,27 @@
   <meta name="msapplication-TileColor" content="#4a6741">
   <meta name="msapplication-config" content="/browserconfig.xml">
   
-  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://smarthabits.app/">
   <meta property="og:title" content="SmartHabits - Transforma tu vida">
   <meta property="og:description" content="Gestiona y mejora tus hábitos diarios de manera inteligente">
   <meta property="og:image" content="https://smarthabits.app/assets/og-image.jpg">
 
-  <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://smarthabits.app/">
   <meta property="twitter:title" content="SmartHabits - Transforma tu vida">
   <meta property="twitter:description" content="Gestiona y mejora tus hábitos diarios de manera inteligente">
   <meta property="twitter:image" content="https://smarthabits.app/assets/og-image.jpg">
 
-  <!-- Icons -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
   <link rel="manifest" href="manifest.json">
   
-  <!-- Fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  
-  <!-- Preconnect para mejorar rendimiento -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
-  <!-- Fuentes -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -63,14 +53,10 @@
 <body>
   <app-root></app-root>
   
-  <!-- Script para detectar preferencias del sistema -->
   <script>
-    // Detectar preferencia de tema del sistema
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.classList.add('dark-theme');
     }
-    
-    // Escuchar cambios en las preferencias del sistema
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       if (!localStorage.getItem('theme')) {
         if (e.matches) {
