@@ -179,39 +179,54 @@ export class HabitListComponent implements OnInit {
       next: (userHabits) => {
         console.log('Loaded user habits:', userHabits);
         
-        if (userHabits.length > 0) {
+        // Siempre sincronizar con localStorage, incluso si hay hábitos de la API
+        const allHabits = this.syncHabitsWithLocalStorage(userHabits);
+        
+        if (allHabits.length > 0) {
           // Cargar hábitos del usuario y sincronizar con el almacenamiento local
-          this.habits = this.syncHabitsWithLocalStorage(userHabits);
+          this.habits = allHabits;
           this.filteredHabits = [...this.habits];
           this.loading = false;
           this.loader.hide();
           this.updateStatistics();
-          console.log('Using user-specific habits');
+          console.log('Using user-specific habits (API + localStorage):', allHabits.length);
         } else {
-          console.log('No user-specific habits found, loading general habits...');
-          this.habitService.getAllAvailableHabits().subscribe({
-            next: (generalHabits) => {
-              console.log('Loaded general habits:', generalHabits);
-              
-              const habitsWithCompletion = generalHabits.map((habit, index) => ({
-                ...habit,
-                completed: index % 3 === 0
-              }));
-              
-              this.habits = habitsWithCompletion;
-              this.filteredHabits = [...habitsWithCompletion];
-              this.loading = false;
-              this.loader.hide();
-              this.updateStatistics();
-              console.log('Using general habits with simulated completion');
-            },
-            error: (error) => {
-              console.error('Error loading general habits:', error);
-              this.error = 'Error al cargar hábitos generales';
-              this.loading = false;
-              this.loader.hide();
-            }
-          });
+          // Intentar cargar desde localStorage si no hay hábitos de la API
+          const localHabits = this.habitService.getAllUserHabitsFromLocalStorage();
+          if (localHabits.length > 0) {
+            console.log('No API habits found, loading from localStorage:', localHabits);
+            this.habits = localHabits;
+            this.filteredHabits = [...localHabits];
+            this.loading = false;
+            this.loader.hide();
+            this.updateStatistics();
+            console.log('Using habits from localStorage');
+          } else {
+            console.log('No user-specific habits found, loading general habits...');
+            this.habitService.getAllAvailableHabits().subscribe({
+              next: (generalHabits) => {
+                console.log('Loaded general habits:', generalHabits);
+                
+                const habitsWithCompletion = generalHabits.map((habit, index) => ({
+                  ...habit,
+                  completed: index % 3 === 0
+                }));
+                
+                this.habits = habitsWithCompletion;
+                this.filteredHabits = [...habitsWithCompletion];
+                this.loading = false;
+                this.loader.hide();
+                this.updateStatistics();
+                console.log('Using general habits with simulated completion');
+              },
+              error: (error) => {
+                console.error('Error loading general habits:', error);
+                this.error = 'Error al cargar hábitos generales';
+                this.loading = false;
+                this.loader.hide();
+              }
+            });
+          }
         }
       },
       error: (error) => {
@@ -356,8 +371,10 @@ export class HabitListComponent implements OnInit {
   // Sincronizar hábitos con el almacenamiento local
   private syncHabitsWithLocalStorage(habits: Habit[]): Habit[] {
     const completedHabits = this.habitService.getCompletedHabitsForCurrentUser();
+    const allLocalHabits = this.habitService.getAllUserHabitsFromLocalStorage();
     
-    return habits.map(habit => {
+    // Sincronizar hábitos de la API con el estado de completado
+    const syncedHabits = habits.map(habit => {
       const localHabit = completedHabits.find(h => h.id === habit.id);
       if (localHabit && localHabit.completed) {
         return {
@@ -369,5 +386,16 @@ export class HabitListComponent implements OnInit {
       }
       return habit;
     });
+    
+    // Agregar hábitos que están en localStorage pero no en la API
+    allLocalHabits.forEach(localHabit => {
+      const existsInApi = syncedHabits.some(h => h.id === localHabit.id);
+      if (!existsInApi) {
+        syncedHabits.push(localHabit);
+        console.log('Agregando hábito de localStorage que no está en API:', localHabit.name);
+      }
+    });
+    
+    return syncedHabits;
   }
 }

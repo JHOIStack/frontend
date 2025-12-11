@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "serve:pwa": "node serve-pwa.js",
+    "serve:ngrok": "echo 'Primero ejecuta: npm run serve:pwa' && echo 'Luego en otra terminal: ngrok http 8080' && ngrok http 8080",
+    "setup:https": "echo 'Instalando mkcert...' && brew install mkcert && echo 'Creando certificados...' && mkcert -install && mkcert localhost 127.0.0.1 ::1 && mv localhost+2.pem cert.pem && mv localhost+2-key.pem key.pem && echo '✅ Certificados creados'"
   },
   "private": true,
   "dependencies": {
@@ -20,10 +23,12 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "@angular/service-worker": "^21.0.3",
     "@swimlane/ngx-charts": "^23.0.0-alpha.0",
     "@types/chart.js": "^2.9.41",
     "chart.js": "^4.5.0",
     "d3": "^7.9.0",
+    "idb": "^8.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -32,6 +37,7 @@
     "@angular-devkit/build-angular": "^19.2.6",
     "@angular/cli": "^19.2.6",
     "@angular/compiler-cli": "^19.2.0",
+    "@angular/pwa": "^19.2.19",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",

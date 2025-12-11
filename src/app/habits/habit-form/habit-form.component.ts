@@ -13,6 +13,7 @@ import { NgIf } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { HabitService, Habit } from '../../core/services/habit.service';
 import { LoaderService } from '../../core/services/loader.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-habit-form',
@@ -66,7 +67,8 @@ export class HabitFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
-    private loader: LoaderService
+    private loader: LoaderService,
+    private authService: AuthService
   ) {
     this.habitForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -142,8 +144,51 @@ export class HabitFormComponent implements OnInit {
         }
       });
     } else {
+      console.log('📝 FORMULARIO: Iniciando creación de hábito...', habitData);
+      
       this.habitService.createHabit(habitData).subscribe({
-        next: () => {
+        next: (createdHabit: Habit) => {
+          console.log('📝 FORMULARIO: Observable completado, hábito:', createdHabit);
+          
+          // Verificar localStorage múltiples veces
+          const checkStorage = () => {
+            const storageKey = 'smarthabits_habits';
+            const stored = localStorage.getItem(storageKey);
+            console.log('📝 FORMULARIO: Verificando... Clave:', storageKey);
+            console.log('📝 FORMULARIO: ¿Existe?:', !!stored);
+            
+            if (stored) {
+              try {
+                const parsed = JSON.parse(stored);
+                console.log('📝 FORMULARIO: ✅✅✅ HÁBITOS ENCONTRADOS:', parsed.length);
+                console.log('📝 FORMULARIO: ✅ CONTENIDO COMPLETO:', JSON.stringify(parsed, null, 2));
+              } catch (e) {
+                console.error('📝 FORMULARIO: ❌ Error parseando:', e);
+              }
+            } else {
+              console.error('📝 FORMULARIO: ❌ NO HAY DATOS');
+              console.log('📝 FORMULARIO: Todas las claves en localStorage:');
+              for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key) {
+                  console.log(`  ${i + 1}. ${key}`);
+                }
+              }
+            }
+          };
+          
+          // Verificar inmediatamente
+          checkStorage();
+          
+          // Verificar después de 100ms
+          setTimeout(checkStorage, 100);
+          
+          // Verificar después de 500ms
+          setTimeout(checkStorage, 500);
+          
+          // Verificar después de 1 segundo
+          setTimeout(checkStorage, 1000);
+          
           this.loading = false;
           this.snackBar.open('Hábito creado correctamente', 'Cerrar', { 
             duration: 3000,

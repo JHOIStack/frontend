@@ -43,20 +43,21 @@ export class StatsService {
           console.log('StatsService: Calculated stats from user habits:', stats);
           return of(stats);
         } else {
-          // Si no hay hábitos específicos, usar hábitos generales
-          return this.habitService.getAllAvailableHabits().pipe(
-            map(generalHabits => {
-              console.log('StatsService: Using general habits:', generalHabits);
-              // Simular que algunos hábitos están completados para demostración
-              const habitsWithCompletion = generalHabits.map((habit, index) => ({
-                ...habit,
-                completed: index % 3 === 0 // Cada tercer hábito está completado
-              }));
-              const stats = this.calculateStatsFromHabits(habitsWithCompletion);
-              console.log('StatsService: Calculated stats from general habits:', stats);
-              return stats;
-            })
-          );
+          // Si no hay hábitos específicos, retornar estadísticas en 0
+          console.log('StatsService: No user habits found, returning zero stats');
+          const zeroStats: Stats = {
+            userStats: {
+              totalHabits: 0,
+              completedToday: 0,
+              pendingToday: 0,
+              currentStreak: 0,
+              totalCompleted: 0,
+              completionRate: 0
+            },
+            categoryStats: [],
+            weeklyProgress: []
+          };
+          return of(zeroStats);
         }
       })
     );
@@ -69,15 +70,16 @@ export class StatsService {
         if (userHabits.length > 0) {
           return of(this.calculateUserStats(userHabits));
         } else {
-          return this.habitService.getAllAvailableHabits().pipe(
-            map(generalHabits => {
-              const habitsWithCompletion = generalHabits.map((habit, index) => ({
-                ...habit,
-                completed: index % 3 === 0
-              }));
-              return this.calculateUserStats(habitsWithCompletion);
-            })
-          );
+          // Si no hay hábitos, retornar estadísticas en 0
+          const zeroStats: UserStats = {
+            totalHabits: 0,
+            completedToday: 0,
+            pendingToday: 0,
+            currentStreak: 0,
+            totalCompleted: 0,
+            completionRate: 0
+          };
+          return of(zeroStats);
         }
       })
     );
@@ -90,15 +92,8 @@ export class StatsService {
         if (userHabits.length > 0) {
           return of(this.calculateCurrentStreak(userHabits));
         } else {
-          return this.habitService.getAllAvailableHabits().pipe(
-            map(generalHabits => {
-              const habitsWithCompletion = generalHabits.map((habit, index) => ({
-                ...habit,
-                completed: index % 3 === 0
-              }));
-              return this.calculateCurrentStreak(habitsWithCompletion);
-            })
-          );
+          // Si no hay hábitos, el streak es 0
+          return of(0);
         }
       })
     );
@@ -111,15 +106,8 @@ export class StatsService {
         if (userHabits.length > 0) {
           return of(this.calculateCategoryStats(userHabits));
         } else {
-          return this.habitService.getAllAvailableHabits().pipe(
-            map(generalHabits => {
-              const habitsWithCompletion = generalHabits.map((habit, index) => ({
-                ...habit,
-                completed: index % 3 === 0
-              }));
-              return this.calculateCategoryStats(habitsWithCompletion);
-            })
-          );
+          // Si no hay hábitos, retornar array vacío
+          return of([]);
         }
       })
     );
@@ -132,15 +120,8 @@ export class StatsService {
         if (userHabits.length > 0) {
           return of(userHabits.filter(habit => habit.completed));
         } else {
-          return this.habitService.getAllAvailableHabits().pipe(
-            map(generalHabits => {
-              const habitsWithCompletion = generalHabits.map((habit, index) => ({
-                ...habit,
-                completed: index % 3 === 0
-              }));
-              return habitsWithCompletion.filter(habit => habit.completed);
-            })
-          );
+          // Si no hay hábitos, retornar array vacío
+          return of([]);
         }
       })
     );
@@ -153,15 +134,8 @@ export class StatsService {
         if (userHabits.length > 0) {
           return of(userHabits.filter(habit => !habit.completed));
         } else {
-          return this.habitService.getAllAvailableHabits().pipe(
-            map(generalHabits => {
-              const habitsWithCompletion = generalHabits.map((habit, index) => ({
-                ...habit,
-                completed: index % 3 === 0
-              }));
-              return habitsWithCompletion.filter(habit => !habit.completed);
-            })
-          );
+          // Si no hay hábitos, retornar array vacío
+          return of([]);
         }
       })
     );
@@ -183,6 +157,19 @@ export class StatsService {
   // Calcular estadísticas del usuario
   private calculateUserStats(habits: Habit[]): UserStats {
     const totalHabits = habits.length;
+    
+    // Si no hay hábitos, retornar todas las estadísticas en 0
+    if (totalHabits === 0) {
+      return {
+        totalHabits: 0,
+        completedToday: 0,
+        pendingToday: 0,
+        currentStreak: 0,
+        totalCompleted: 0,
+        completionRate: 0
+      };
+    }
+    
     const completedToday = habits.filter(h => h.completed).length;
     const pendingToday = totalHabits - completedToday;
     const completionRate = totalHabits > 0 ? (completedToday / totalHabits) * 100 : 0;
@@ -203,11 +190,12 @@ export class StatsService {
 
   // Calcular streak actual (simplificado)
   private calculateCurrentStreak(habits: Habit[]): number {
+    // Si no hay hábitos, el streak es 0
+    if (habits.length === 0) return 0;
+    
     // Por ahora, calculamos un streak basado en hábitos completados hoy
     const completedToday = habits.filter(h => h.completed).length;
     const totalHabits = habits.length;
-
-    if (totalHabits === 0) return 0;
 
     // Si completó más del 80% de sus hábitos hoy, consideramos que mantiene el streak
     const completionRate = (completedToday / totalHabits) * 100;

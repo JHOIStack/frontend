@@ -57,6 +57,9 @@ export class AuthService {
       realUser = { ...existingUser };
       console.log('Found existing user:', realUser);
     } else {
+      // Limpiar datos previos del usuario anterior antes de crear el nuevo usuario
+      this.clearPreviousUserData();
+      
       // Crear un nuevo usuario basado en el email proporcionado
       const displayName = email.split('@')[0]; // Usar la parte antes del @ como nombre de display
       const newUserId = 'user-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -70,6 +73,9 @@ export class AuthService {
         role: 'COMMON'
       };
       console.log('Created new user:', realUser);
+      
+      // Inicializar datos del nuevo usuario en 0
+      this.initializeNewUserData(newUserId);
     }
 
     const mockToken = 'mock-jwt-token-' + Date.now();
@@ -94,6 +100,9 @@ export class AuthService {
   register(data: { name: string; email: string; age: number; region: string }): Observable<any> {
     console.log('Attempting registration with data:', data);
     
+    // Limpiar datos previos del usuario anterior antes de crear el nuevo usuario
+    this.clearPreviousUserData();
+    
     // Crear un nuevo usuario con los datos proporcionados
     const newUserId = 'user-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     const newUser: User = {
@@ -114,6 +123,9 @@ export class AuthService {
         
         // Generar token mock
         const mockToken = 'mock-jwt-token-' + Date.now();
+        
+        // Inicializar datos del nuevo usuario en 0
+        this.initializeNewUserData(newUserId);
         
         // Guardar token y datos del usuario
         this.setToken(mockToken);
@@ -177,5 +189,61 @@ export class AuthService {
       this.setUser(updatedUser);
       console.log('Updated user data:', updatedUser);
     }
+  }
+
+  // Limpiar datos previos del usuario anterior
+  private clearPreviousUserData(): void {
+    console.log('Clearing previous user data from localStorage');
+    
+    // Obtener todas las claves de localStorage
+    const keysToRemove: string[] = [];
+    
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (
+        key.startsWith('smarthabits_completed_habits_') ||
+        key.startsWith('smarthabits_habit_history_') ||
+        key.startsWith('smarthabits_stats_')
+      )) {
+        keysToRemove.push(key);
+      }
+    }
+    
+    // Eliminar todas las claves relacionadas con hábitos y estadísticas
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+      console.log('Removed localStorage key:', key);
+    });
+  }
+
+  // Inicializar datos del nuevo usuario en 0
+  private initializeNewUserData(userId: string): void {
+    console.log('Initializing new user data for user:', userId);
+    
+    // Inicializar hábitos completados como array vacío
+    const completedHabitsKey = `smarthabits_completed_habits_${userId}`;
+    localStorage.setItem(completedHabitsKey, JSON.stringify([]));
+    
+    // Inicializar historial de hábitos como array vacío
+    const habitHistoryKey = `smarthabits_habit_history_${userId}`;
+    localStorage.setItem(habitHistoryKey, JSON.stringify([]));
+    
+    // Inicializar estadísticas en 0
+    const statsKey = `smarthabits_stats_${userId}`;
+    const initialStats = {
+      totalHabits: 0,
+      completedToday: 0,
+      pendingToday: 0,
+      currentStreak: 0,
+      totalCompleted: 0,
+      completionRate: 0
+    };
+    localStorage.setItem(statsKey, JSON.stringify(initialStats));
+    
+    console.log('New user data initialized with zeros:', {
+      completedHabits: [],
+      habitHistory: [],
+      stats: initialStats
+    });
   }
 }
